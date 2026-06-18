@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './App.css';
 import AuthModals from './AuthModals';
-/*import AnnouncementPopup from './AnnouncementPopup'; // Import your new popup*//
+--/*import AnnouncementPopup from './AnnouncementPopup'; // Import your new popup*/ 
 
 
 //function App() {
