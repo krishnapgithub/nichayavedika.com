@@ -1,21 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './App.css';
 import AuthModals from './AuthModals';
---/*import AnnouncementPopup from './AnnouncementPopup'; // Import your new popup*/ 
-
-
-//function App() {
-//    return (
-//        <div>
-//            <AnnouncementPopup /> {/* The popup sits at the root level */}
-//            <Navbar />
-//            <HeroBanner />
-//            {/* Rest of your home page content */}
-//        </div>
-//    );
-//}
-
-//export default App;
 
 
 export default function App() {
