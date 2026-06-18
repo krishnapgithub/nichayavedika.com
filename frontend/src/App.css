@@ -1,0 +1,864 @@
+﻿/* ==========================================================================
+   NV ROUNDED BRAND LOGO WITH VIBRATING GLOW AURA
+   ========================================================================== */
+.brand-logo-circle {
+    width: 46px;
+    height: 46px;
+    border: 1.5px solid var(--gold-line);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    position: relative;
+    z-index: 5;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.65), 0 0 20px rgba(255, 235, 59, 0.4);
+    animation: goldAuraVibrationMode 2s infinite ease-in-out;
+}
+
+    .brand-logo-circle .logo-text {
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        line-height: 1;
+        display: flex;
+    }
+
+        .brand-logo-circle .logo-text .maroon-letter {
+            color: #6b0d24 !important;
+        }
+
+        .brand-logo-circle .logo-text .gold-letter {
+            color: #d4af37 !important;
+        }
+
+@keyframes goldAuraVibrationMode {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 223, 0, 0.65), 0 0 20px rgba(255, 235, 59, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.85), 0 0 30px rgba(255, 235, 59, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(255, 223, 0, 0.65), 0 0 20px rgba(255, 235, 59, 0.4);
+    }
+}
+
+/* ==========================================================================
+   NICHAYAVEDIKA TWO-TONE TEXT STYLE WITH GOLD AURA
+   ========================================================================== */
+.brand-main-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: none;
+    line-height: 1.1;
+    display: inline-block;
+    padding: 4px 8px;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 0 25px rgba(255, 223, 0, 0.4), 0 0 35px rgba(255, 235, 100, 0.2);
+}
+
+    .brand-main-title .text-maroon {
+        color: #6b0d24 !important;
+    }
+
+    .brand-main-title .text-gold {
+        color: #d4af37 !important;
+    }
+
+.nav-toggle-checkbox, .mobile-hamburger-btn {
+    display: none;
+}
+
+/* ==========================================================================
+   GLOBAL DESIGN PALETTE & BASE SYSTEM
+   ========================================================================== */
+:root {
+    --gold-line: #d4af37;
+    --navy-blue: #031b33;
+    --snow-white: #fffdf9;
+    --wine-red: #6b0d24;
+    --text-dark: #333333;
+    --radius-flat: 4px;
+    --site-max-width: 1200px;
+    --site-horizontal-padding: 24px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Single view constraint properties setup */
+html, body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--snow-white);
+    display: flex;
+    flex-direction: column;
+}
+
+.app-viewport-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   1. SITE NAVBAR HEADER
+   ========================================================================== */
+.global-site-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto;
+    padding: 14px var(--site-horizontal-padding);
+    background: #ffffff;
+    border-bottom: 1.5px solid var(--gold-line);
+    flex-shrink: 0;
+}
+
+.nav-brand-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-text-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.brand-caption-text {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--gold-line);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+.nav-links-menu {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.menu-item {
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    position: relative;
+    padding-bottom: 4px;
+}
+
+    .menu-item:hover, .menu-item.active {
+        color: var(--wine-red);
+    }
+
+        .menu-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1.5px;
+            background: var(--wine-red);
+        }
+
+.nav-actions-auth {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-action-login, .btn-action-register {
+    background: transparent;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--wine-red);
+    border: 1.5px solid var(--wine-red);
+    padding: 8px 20px;
+    border-radius: var(--radius-flat);
+    cursor: pointer;
+}
+
+.btn-action-register {
+    color: #ffffff;
+    background: var(--navy-blue);
+    border: none;
+}
+/* ==========================================================================
+   2. MAIN HERO ROW GRID MATRIX & TEMPLE FRAME INSCRIPTION
+   ========================================================================== */
+.horizontal-hero-matrix.structural-realignment {
+    display: flex;
+    justify-content: flex-start !important;
+    align-items: flex-start;
+    gap: 32px !important;
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto;
+    padding: 30px var(--site-horizontal-padding);
+}
+
+.left-branded-image-stack {
+    flex-shrink: 0;
+    margin: 0 !important;
+}
+
+.temple-archway-frame {
+    width: 100%;
+    max-width: 270px !important;
+    height: 345px !important;
+    border: 1.5px solid var(--gold-line);
+    border-radius: 135px 135px 8px 8px !important;
+    padding: 6px;
+    background: var(--snow-white);
+    position: relative;
+    box-shadow: 0 12px 36px rgba(107, 13, 36, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .temple-archway-frame .arched-image-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 129px 129px 4px 4px !important;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+        .temple-archway-frame .arched-image-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover !important;
+            object-position: center 12%;
+        }
+
+.temple-inscription-badge {
+    position: absolute;
+    bottom: -14px !important;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--snow-white);
+    border: 1px solid var(--gold-line);
+    padding: 6px 16px !important;
+    border-radius: var(--radius-flat);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(28, 20, 22, 0.06);
+    z-index: 5;
+    text-align: center;
+    width: 82% !important;
+    font-size: 0.72rem !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+}
+
+.right-content-management-stack {
+    flex-grow: 1;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.hero-action-buttons-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.btn-hero-primary {
+    background: var(--navy-blue);
+    color: #ffffff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: var(--radius-flat);
+    cursor: pointer;
+}
+
+.btn-hero-secondary {
+    background: transparent;
+    color: var(--wine-red);
+    border: 1.5px solid var(--wine-red);
+    padding: 11px 28px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: var(--radius-flat);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   MEMBER FLUID BENTO USER PROFILE CARDS ROW
+   ========================================================================== */
+.profile-cards-grid-row-four {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.member-profile-card-four {
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    padding: 16px;
+    width: calc(25% - 12px);
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.member-tag-label {
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+    .member-tag-label.new-female {
+        background: #fff0f5;
+        color: var(--wine-red);
+    }
+
+    .member-tag-label.new-male {
+        background: #e6f2ff;
+        color: var(--navy-blue);
+    }
+
+.member-avatar-circle {
+    width: 60px;
+    height: 60px;
+    background: #f4f4f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.avatar-placeholder {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #999999;
+}
+
+.member-display-name {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.member-meta-details {
+    font-size: 0.75rem;
+    color: #777777;
+    margin-bottom: 14px;
+}
+
+.btn-view-profile-card {
+    background: var(--navy-blue);
+    color: #ffffff;
+    border: none;
+    width: 100%;
+    padding: 8px 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: var(--radius-flat);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   3. LOWER HORIZONTAL FILTER SYSTEM SEARCH PANEL
+   ========================================================================== */
+.global-full-width-search-bar-system {
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto;
+    padding: 0 var(--site-horizontal-padding) 30px var(--site-horizontal-padding);
+    clear: both;
+}
+
+.search-panel-container {
+    background: #fffbf2;
+    border: 1px solid #f2e3c6;
+    border-radius: 6px;
+    padding: 12px 18px !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.03);
+}
+
+.search-panel-header-row {
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.search-panel-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--wine-red);
+    letter-spacing: 0.5px;
+}
+
+.search-filter-horizontal-form {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+.form-field-group-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+}
+
+    .form-field-group-block label {
+        font-size: 0.65rem !important;
+        font-weight: bold;
+        color: #666666;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px !important;
+    }
+
+.custom-select-wrapper {
+    width: 100%;
+    position: relative;
+}
+
+    .custom-select-wrapper select {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        border-radius: var(--radius-flat);
+        padding: 6px 24px 6px 8px !important;
+        font-size: 0.8rem !important;
+        color: #333333;
+        outline: none;
+        cursor: pointer;
+        min-height: 32px !important;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .custom-select-wrapper::after {
+        content: '▼';
+        font-size: 0.55rem;
+        color: #777777;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+.form-submit-action-block {
+    flex-shrink: 0;
+}
+
+.btn-horizontal-search-submit {
+    background: var(--navy-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-flat);
+    padding: 4px 16px !important;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px !important;
+}
+
+    .btn-horizontal-search-submit span {
+        font-size: 0.65rem !important;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+    }
+
+/* ==========================================================================
+   ULTRA-COMPACT MID-ROW PLATFORM STATS STRIP
+   ========================================================================== */
+.platform-info-highlights-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto 4px auto !important;
+    padding: 2px var(--site-horizontal-padding) !important;
+    background: transparent;
+    height: auto !important;
+}
+/* ==========================================================================
+   ULTRA-COMPACT MID-ROW PLATFORM STATS STRIP DETAIL MATCHERS
+   ========================================================================== */
+.info-highlight-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.info-metric-number {
+    font-size: 1.15rem !important;
+    font-weight: 800;
+    color: var(--wine-red);
+    line-height: 1.0 !important;
+    margin-bottom: 0px !important;
+}
+
+.info-metric-label {
+    font-size: 0.62rem !important;
+    font-weight: 700;
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.0 !important;
+    margin-top: 1px !important;
+}
+
+.info-highlight-divider {
+    width: 1px;
+    height: 16px !important;
+    background: var(--gold-line);
+    opacity: 0.3;
+}
+
+/* ==========================================================================
+   4. GLOBAL FOOTER SITE STYLES WITH BRAND LINKS
+   ========================================================================== */
+.global-site-footer {
+    width: 100%;
+    background: transparent;
+    margin-top: 30px;
+    padding: 0 var(--site-horizontal-padding) 24px var(--site-horizontal-padding);
+}
+
+.footer-divider-line {
+    width: 100%;
+    max-width: var(--site-max-width);
+    height: 1px;
+    background: var(--gold-line);
+    opacity: 0.3;
+    margin: 0 auto 14px auto;
+}
+
+.footer-content-wrapper {
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left-legal p {
+    font-size: 0.78rem;
+    color: #666666;
+    letter-spacing: 0.3px;
+}
+
+.footer-right-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-link {
+    text-decoration: none;
+    font-size: 0.78rem;
+    color: #555555;
+    transition: color 0.2s ease;
+}
+
+    .footer-link:hover {
+        color: var(--wine-red);
+    }
+
+.link-separator {
+    font-size: 0.75rem;
+    color: #cccccc;
+    user-select: none;
+}
+
+.facebook-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+}
+
+.facebook-icon-svg {
+    width: 14px;
+    height: 14px;
+    fill: #1877f2;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.facebook-brand-link:hover .facebook-icon-svg {
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   5. COMPLETE RESPONSIVE ENGINE (TABLET & MOBILE MEDIA QUERY SYSTEMS)
+   ========================================================================== */
+@media (max-width: 992px) {
+    .nav-links-menu {
+        gap: 14px;
+    }
+
+    .brand-main-title {
+        font-size: 1.4rem;
+    }
+
+    .profile-cards-grid-row-four {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .member-profile-card-four {
+        width: calc(50% - 7px);
+    }
+
+    .search-filter-horizontal-form {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .form-field-group-block {
+        width: calc(33.33% - 8px);
+    }
+
+    .form-submit-action-block {
+        width: 100%;
+    }
+
+    .btn-horizontal-search-submit {
+        width: 100%;
+        flex-direction: row;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .global-site-navbar {
+        position: relative;
+        padding: 12px var(--site-horizontal-padding);
+    }
+
+    .brand-main-title {
+        font-size: 1.25rem;
+    }
+
+    .brand-caption-text {
+        font-size: 0.55rem;
+    }
+
+    .mobile-hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 22px;
+        height: 16px;
+        cursor: pointer;
+        order: 2;
+    }
+
+        .mobile-hamburger-btn span {
+            width: 100%;
+            height: 2px;
+            background-color: var(--wine-red);
+            transition: all 0.2s ease;
+        }
+
+    .nav-actions-auth {
+        order: 1;
+        margin-left: auto;
+        margin-right: 16px;
+        gap: 8px;
+    }
+
+    .btn-action-login, .btn-action-register {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .nav-links-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 8px var(--site-horizontal-padding);
+        border-bottom: 1.5px solid var(--gold-line);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        z-index: 2000;
+    }
+
+    .menu-item {
+        width: 100%;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .menu-item.active::after {
+            display: none;
+        }
+
+    .nav-toggle-checkbox:checked ~ .nav-links-menu {
+        display: flex;
+    }
+
+    .nav-toggle-checkbox:checked ~ .mobile-hamburger-btn span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-toggle-checkbox:checked ~ .mobile-hamburger-btn span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle-checkbox:checked ~ .mobile-hamburger-btn span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .horizontal-hero-matrix.structural-realignment {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px !important;
+        padding: 20px var(--site-horizontal-padding);
+    }
+
+    .left-branded-image-stack, .right-content-management-stack {
+        width: 100%;
+        align-items: center;
+    }
+
+    .hero-action-buttons-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-hero-primary, .btn-hero-secondary {
+        width: 100%;
+        text-align: center;
+    }
+
+    .member-profile-card-four {
+        width: 100%;
+    }
+
+    .platform-info-highlights-strip {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .info-highlight-divider {
+        display: none;
+    }
+
+    .form-field-group-block {
+        width: 100%;
+    }
+
+    .footer-content-wrapper {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .footer-right-links {
+        justify-content: center;
+    }
+}
+/* ==========================================================================
+   6. EXTRA COMPACT SCREEN ADAPTABILITY & ARTWORK CONTAINMENT
+   ========================================================================== */
+@media (max-width: 480px) {
+    .brand-main-title {
+        font-size: 1.15rem;
+    }
+
+    .brand-logo-circle {
+        width: 36px;
+        height: 36px;
+    }
+
+    .nav-actions-auth {
+        margin-right: 12px;
+    }
+}
+
+.temple-archway-frame .arched-image-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 129px 129px 4px 4px !important;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+    .temple-archway-frame .arched-image-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain !important;
+        object-position: center center;
+    }
+
+.hero-banner-right-media-column {
+    width: 100%;
+    height: 85%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-banner-main-artwork-wrapper {
+    width: 100%;
+    max-width: 360px;
+    height: 100%;
+    border: 2px solid #FFD54F;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 213, 79, 0.45);
+    background-color: transparent;
+}
+
+    .hero-banner-main-artwork-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain !important;
+        object-position: center center;
+    }
