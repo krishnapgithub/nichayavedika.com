@@ -1,0 +1,25 @@
+# Visual Studio / VS Code
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+dist/
+build/
+
+# Dependency folders
+node_modules/
+jspm_packages/
+
+# Environment variables (Crucial for security!)
+.env
+.env.local
+.env.development.local
+
+# Operating System files
+Thumbs.db
+.DS_Store
