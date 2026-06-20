@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 require('dotenv').config();
 
-const User = require('./User'); // Make sure your User.js schema model is in the same folder
+const user = require('./user'); // Make sure your User.js schema model is in the same folder
 
 const app = express();
 
