@@ -3,12 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+    "scripts": {
+
+        "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "backend": "npx nodemon server.js",
+        "frontend": "vite"
+    },
   "dependencies": {
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

@@ -2,8 +2,15 @@
 import './App.css';
 import AuthModals from './AuthModals';
 
+// 1. Import the component (Make sure the file path matches where you saved it)
+//import ConstructionBanner from './ConstructionBanner';
+
+import Register from './Register'; // Import the new registration component
 
 export default function App() {
+
+
+    
   // State handles for smooth backdrop login/register popups
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -15,6 +22,8 @@ export default function App() {
     setIsLoginOpen(false);
     setIsRegisterOpen(false);
   };
+
+
 
   // Queries your live cloud collection across network port 5000
   useEffect(() => {
@@ -66,7 +75,7 @@ export default function App() {
 
         <div className="nav-actions-auth">
           <button className="btn-action-login" onClick={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}>LOGIN</button>
-          <button className="btn-action-register" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>REGISTER</button>
+                  <button className="btn-action-login" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>REGISTER</button>
         </div>
       </header>
 
@@ -87,7 +96,7 @@ export default function App() {
 <div className="nav-actions-auth">
   {/* Added active onClick handlers to toggle your registration modals instantly */}
   <button className="btn-action-login" onClick={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}>Create Profile</button>
-  <button className="btn-action-register" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>Browse Profile(s)</button>
+                      <button className="btn-action-login" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>Browse Profile(s)</button>
 </div>
 
           <div className="profile-cards-grid-row-four">
@@ -114,7 +123,7 @@ export default function App() {
                   <div className="member-avatar-circle"><span className="avatar-placeholder">F</span></div>
                   <h4 className="member-display-name">Meera Hegde</h4>
                   <p className="member-meta-details">25 Yrs • Bangalore</p>
-                  <button className="btn-view-profile-card">View Profile</button>
+                                      <button className="btn-view-profile-card">View Profile</button>
                 </div>
                 <div className="member-profile-card-four">
                   <span className="member-tag-label new-male">New Male</span>
@@ -168,7 +177,7 @@ export default function App() {
           </div>
           <form className="search-filter-horizontal-form" onSubmit={(e) => e.preventDefault()}>
             <div className="form-field-group-block">
-              <label htmlFor="search-religion">RELIGION</label>
+              <label htmlFor="search-religion">Religion</label>
               <div className="custom-select-wrapper">
                 <select id="search-religion">
                   <option value="any">Any</option>
@@ -177,7 +186,7 @@ export default function App() {
               </div>
             </div>
             <div className="form-field-group-block">
-              <label htmlFor="search-community">COMMUNITY</label>
+              <label htmlFor="search-community">Community</label>
               <div className="custom-select-wrapper">
                 <select id="search-community">
                   <option value="any">Any</option>
@@ -185,7 +194,7 @@ export default function App() {
               </div>
             </div>
             <div className="form-field-group-block">
-              <label htmlFor="search-age">AGE SCALE</label>
+              <label htmlFor="search-age">Age Scale</label>
               <div className="custom-select-wrapper">
                 <select id="search-age">
                   <option value="18-60">18 - 60 Years</option>
@@ -193,7 +202,7 @@ export default function App() {
               </div>
             </div>
             <div className="form-field-group-block">
-              <label htmlFor="search-country">COUNTRY LOCATION</label>
+              <label htmlFor="search-country">Country</label>
               <div className="custom-select-wrapper">
                 <select id="search-country">
                   <option value="us">United States</option>
@@ -201,16 +210,19 @@ export default function App() {
               </div>
             </div>
             <div className="form-field-group-block">
-              <label htmlFor="search-state">STATE / REGION</label>
+              <label htmlFor="search-state">State</label>
               <div className="custom-select-wrapper">
                 <select id="search-state">
-                  <option value="any">Any</option>
+                                  <option value="any">Telangana</option>
+                                  <option value="any">Andra Pradesh</option>
+                                  <option value="any">Karnataka</option>
+                                  <option value="any">Tamilanadu</option>
                 </select>
               </div>
             </div>
             <div className="form-submit-action-block">
-              <button type="submit" className="btn-horizontal-search-submit">
-                <span>SEARCH</span> <span>PROFILES</span>
+                          <button type="submit" className="btn-action-login">
+                <span>Search</span> <span> Profiles</span>
               </button>
             </div>
           </form>
