@@ -1,111 +1,90 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import Register from './Register';
 
 export default function AuthModals({ isLoginOpen, isRegisterOpen, onCloseAll }) {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
+    const [errorMsg, setErrorMsg] = useState('');
 
-  if (!isLoginOpen && !isRegisterOpen) return null;
+    if (!isLoginOpen && !isRegisterOpen) return null;
 
-  const handleClose = () => {
-    setFullName("");
-    setEmail("");
-    setPassword("");
-    onCloseAll();
-  };
+    const handleInputChange = (e) => {
+        setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    };
 
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("${BACKEND_URL}/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert("Registration cleared! Please log in now.");
-        handleClose();
-      } else {
-        alert(data.message || "Registration failed");
-      }
-    } catch (err) {
-      alert("Cannot reach backend server. Make sure node server.js is running!");
-    }
-  };
+    const handleLoginSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMsg('');
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginData),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed.');
+            }
+            onCloseAll();
+        } catch (err) {
+            setErrorMsg(err.message);
+        }
+    };
 
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("${BACKEND_URL}/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert("Welcome back, " + data.user.fullName + "!");
-        localStorage.setItem("userToken", data.token);
-        handleClose();
-      } else {
-        alert(data.message || "Login verification failed");
-      }
-    } catch (err) {
-      alert("Cannot reach backend server. Make sure node server.js is running!");
-    }
-  };
+    return (
+        <div className="modal-overlay" onClick={onCloseAll}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                <button className="close-btn" onClick={onCloseAll}>&times;</button>
 
-  return (
-    <>
-      {isLoginOpen && (
-        <div className="auth-modal-overlay">
-          <div className="auth-modal-card">
-            <button className="modal-close-btn" onClick={handleClose}>&times;</button>
-            <div className="auth-modal-header">
-              <h3>Welcome Back</h3>
-              <p>Login to your account</p>
+                {/* 1. UNIFIED LOGIN POPUP CONTAINER */}
+                {isLoginOpen && (
+                    <div className="auth-form-content">
+                        <h2 className="modal-title">Welcome Back</h2>
+                        <p className="modal-subtitle">Login to your account</p>
+
+                        {errorMsg && <div className="form-msg-error">{errorMsg}</div>}
+
+                        <form onSubmit={handleLoginSubmit} className="modal-form-matrix">
+                            <div className="form-group">
+                                <label className="modal-field-label">Email Address</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={loginData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter email"
+                                    className="modal-input-field"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="modal-field-label">Password</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={loginData.password}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter password"
+                                    className="modal-input-field"
+                                    required
+                                />
+                            </div>
+
+                            {/* STYLISH MODERN LIGHT GOLD BUTTON */}
+                            <button type="submit" className="btn-modal-gold-action">
+                                Login to Account
+                            </button>
+                        </form>
+                    </div>
+                )}
+
+                {/* 2. UNIFIED REGISTER POPUP CONTAINER */}
+                {isRegisterOpen && (
+                    <div className="auth-form-content">
+                        <Register onSuccess={onCloseAll} />
+                    </div>
+                )}
             </div>
-            <form onSubmit={handleLoginSubmit}>
-              <div className="auth-input-group">
-                <label>Email Address</label>
-                <input type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-              <div className="auth-input-group">
-                <label>Password</label>
-                <input type="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-              <button type="submit" className="auth-submit-btn">Login to Account</button>
-            </form>
-          </div>
         </div>
-      )}
-
-      {isRegisterOpen && (
-        <div className="auth-modal-overlay">
-          <div className="auth-modal-card">
-            <button className="modal-close-btn" onClick={handleClose}>&times;</button>
-            <div className="auth-modal-header">
-              <h3>Create Free Account</h3>
-              <p>Join thousands of verified families</p>
-            </div>
-            <form onSubmit={handleRegisterSubmit}>
-              <div className="auth-input-group">
-                <label>Full Name</label>
-                <input type="text" placeholder="Enter full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-              </div>
-              <div className="auth-input-group">
-                <label>Email Address</label>
-                <input type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-              <div className="auth-input-group">
-                <label>Password</label>
-                <input type="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-              <button type="submit" className="auth-submit-btn" style={{ background: "#b45309" }}>Register Free</button>
-            </form>
-          </div>
-        </div>
-      )}
-    </>
-  );
+    );
 }

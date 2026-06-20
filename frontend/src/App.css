@@ -909,3 +909,216 @@ css.view-profile-btn {
     padding: 10px 20px;
     border-radius: 6px; /* Matches the subtle roundness of your old button */
 }
+
+/* 1. This darkens the whole screen and freezes it in place */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Forces it above all other elements */
+}
+
+/* 2. This formats your white registration popup card */
+.modal-box {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalScaleUp 0.3s ease-out; /* Optional smooth popup pop */
+}
+
+/* 3. This puts the close button in the top right corner */
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #555;
+}
+
+    .close-btn:hover {
+        color: #000;
+    }
+
+/* Optional smooth entry effect */
+@keyframes modalScaleUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+/* If AuthModals uses a different wrapper class, add it here: */
+.auth-modal-wrapper,
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Shared Typography and Spacing */
+.modal-title {
+    margin: 0 0 5px 0;
+    font-size: 24px;
+    color: #333333;
+    font-weight: 700;
+    text-align: center;
+}
+
+.modal-subtitle {
+    margin: 0 0 25px 0;
+    font-size: 14px;
+    color: #666666;
+    text-align: center;
+}
+
+.modal-form-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Identical Field Input Boxes for Login and Register */
+.modal-input-field {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    background-color: #fafafa;
+}
+
+    .modal-input-field:focus {
+        border-color: #800020; /* Matches your Maroon theme highlight */
+        outline: none;
+        background-color: #ffffff;
+    }
+
+/* Stylish Light Gold Action Button for Modals */
+.btn-modal-gold-action {
+    width: 100%;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #fce06d 0%, #dfb73a 100%);
+    color: #4a3319; /* Elegant dark bronze/brown text for premium legibility */
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border: 1px solid #c79e2c;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(223, 183, 58, 0.15);
+    margin-top: 10px;
+}
+
+    /* Hover and Focus interaction settings */
+    .btn-modal-gold-action:hover {
+        background: linear-gradient(135deg, #fff099 0%, #ebd05b 100%);
+        box-shadow: 0 4px 14px rgba(223, 183, 58, 0.35);
+        transform: translateY(-1px);
+    }
+
+    .btn-modal-gold-action:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(223, 183, 58, 0.2);
+    }
+/* Ensure uniform input handling across all form blocks */
+.modal-form-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Fixes input fields bulging or overlapping */
+.modal-input-field {
+    width: 100% !important;
+    height: 42px;
+    padding: 10px 14px;
+    font-size: 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-sizing: border-box; /* CRITICAL: Prevents padding overlap */
+    outline: none;
+    background-color: #ffffff;
+}
+
+/* Modern grid alignment for columns (Gender/Age, Religion/Location) */
+.modal-form-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.modal-row-flex-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form group structural normalization */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0px; /* Managed cleanly by gap above */
+}
+
+.modal-field-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    text-align: left;
+}
+
+/* Responsive adjustment: Stacks side-by-side items on tighter display portals */
+@media (max-width: 480px) {
+    .modal-form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.modal-submit-override {
+    width: 100% !important;
+    display: block !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    /* CRITICAL WEB STANDARD FOR ALL-CAPS STYLING */
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important; /* Adds a clean modern gap between capital letters */
+    margin-top: 15px !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+}
+
+

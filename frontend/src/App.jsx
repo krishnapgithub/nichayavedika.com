@@ -252,7 +252,25 @@ export default function App() {
       </footer>
 
       {/* ACTIVE AUTHORIZATION WINDOW POPUP OVERLAYS CONTROLLER */}
-      <AuthModals isLoginOpen={isLoginOpen} isRegisterOpen={isRegisterOpen} onCloseAll={closeModals} />
+         
+
+          {/* ACTIVE AUTHORIZATION WINDOW POPUP OVERLAYS CONTROLLER */}
+          <AuthModals
+              isLoginOpen={isLoginOpen}
+              isRegisterOpen={isRegisterOpen}
+              onCloseAll={closeModals}
+          />
+
+          {/* POPUP OVERLAY MOUNT FOR REGISTRATION COMPONENT */}
+          {isRegisterOpen && (
+              <div className="modal-overlay">
+                  <div className="modal-box">
+                      <button className="close-btn" onClick={closeModals}>&times;</button>
+                      <Register onSuccess={closeModals} />
+                  </div>
+              </div>
+          )}
+
 
     </div>
   );

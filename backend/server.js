@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const path = require('path'); // Added for production static file serving
 require('dotenv').config();
 
 const app = express();
@@ -50,6 +51,7 @@ app.get('/api/auth/profiles', async (req, res) => {
 app.post('/api/register', async (req, res) => {
     try {
         const { fullName, email, password, gender, age, religion, location, profession } = req.body;
+
         if (!fullName || !email || !password || !gender || !age || !religion || !location || !profession) {
             return res.status(400).json({ message: "Please fill in all layout fields." });
         }
@@ -80,6 +82,47 @@ app.post('/api/register', async (req, res) => {
         return res.status(500).json({ message: "An internal server registration error occurred." });
     }
 });
+
+// 3. NEW LOGIN ROUTE: Validates incoming AuthModals login check-ins securely
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ message: "Please enter both email and password fields." });
+        }
+
+        // Lookup user in MongoDB Atlas
+        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid email credentials or password match." });
+        }
+
+        // Compare encrypted passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid email credentials or password match." });
+        }
+
+        return res.status(200).json({
+            message: "Login successful!",
+            user: { id: user._id, fullName: user.fullName, email: user.email }
+        });
+    } catch (error) {
+        console.error("Login verification routing failure:", error);
+        return res.status(500).json({ message: "An internal login error occurred." });
+    }
+});
+
+// 4. PRODUCTION ROUTER HANDLER: Delivers compiled React build pages automatically
+if (process.env.NODE_ENV === 'production') {
+    // Point express to serve your compiled client folder assets
+    app.use(express.static(path.join(__dirname, 'client/dist'))); // Change to 'client/build' if using Create-React-App
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+    });
+}
 
 // Start the port listening block
 const PORT = process.env.PORT || 5000;
