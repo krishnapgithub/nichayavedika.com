@@ -14,6 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(cors()); // 🌟 This line tells the browser to allow port 5173 to talk to port 5000!
 
+// Add this inside server.js to catch bare root domain requests
+app.get('/', (req, res) => {
+    res.status(200).send("NichayaVedika Matrimony Backend API is live and running cleanly!");
+});
+
 // ------------------------------------------------------------------------- 
 // COMBINED SCHEMA: Defined inline directly to prevent any Vercel file import errors 
 // ------------------------------------------------------------------------- 
