@@ -1122,3 +1122,15 @@ css.view-profile-btn {
 }
 
 
+.nav-links-menu .menu-item {
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: 400;
+    transition: font-weight 0.2s ease-in-out;
+}
+
+    /* Turns the menu item bold instantly when a user hovers over it */
+    .nav-links-menu .menu-item:hover,
+    .nav-links-menu .menu-item.active {
+        font-weight: 700;
+    }

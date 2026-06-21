@@ -1,277 +1,281 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './App.css';
-import AuthModals from './AuthModals';
-
-// 1. Import the component (Make sure the file path matches where you saved it)
-//import ConstructionBanner from './ConstructionBanner';
-
-import Register from './Register'; // Import the new registration component
+import Navbar from './components/Navbar';
+import AuthModals from './components/AuthModals';
+import Register from './components/Register';
+import InactivityTracker from './components/InactivityTracker';
+import ResetPasswordPage from './components/ResetPasswordPage'; // Added Reset Page Import
 
 export default function App() {
+    const [user, setUser] = useState(null);
+    const [bannerMessage, setBannerMessage] = useState('');
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
+    // Initialize your profile deck with exactly 4 stable placeholder items
+    const [profiles, setProfiles] = useState([
+        { _id: 'temp1', fullName: 'Meera Hegde', gender: 'Female', age: 25, location: 'Bangalore', isPlaceholder: true },
+        { _id: 'temp2', fullName: 'Aditya Verma', gender: 'Male', age: 28, location: 'Mumbai', isPlaceholder: true },
+        { _id: 'temp3', fullName: 'Ananya Iyer', gender: 'Female', age: 26, location: 'Chennai', isPlaceholder: true },
+        { _id: 'temp4', fullName: 'Rohan Sharma', gender: 'Male', age: 29, location: 'Delhi', isPlaceholder: true }
+    ]);
 
-    
-  // State handles for smooth backdrop login/register popups
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  
-  // Database store array for active cloud documents
-  const [profiles, setProfiles] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-  const closeModals = () => {
-    setIsLoginOpen(false);
-    setIsRegisterOpen(false);
+useEffect(() => {
+  const loadProfiles = async () => {
+    setLoading(true);
+    try {
+      // 🌟 Double check this endpoint matches your backend exactly!
+      const response = await fetch('http://localhost:5000/api/auth/profiles'); 
+      const data = await response.json();
+      
+      // Only overwrite the placeholder array if the backend actually sent valid data
+      if (response.ok && Array.isArray(data) && data.length > 0) {
+        setProfiles(data);
+      } else {
+        console.warn("Backend didn't return data, keeping placeholder profiles.");
+      }
+    } catch (error) {
+      console.error("Failed to connect to backend server. Keeping placeholders:", error);
+    } finally {
+      // 🌟 Crucial: This turns off the "loading..." text no matter what happens
+      setLoading(false); 
+    }
   };
 
+  loadProfiles();
+}, []);
 
-
-  // Queries your live cloud collection across network port 5000
-  useEffect(() => {
-    const fetchCloudProfiles = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/auth/profiles');
-        const data = await response.json();
-        if (response.ok) {
-          setProfiles(data);
+    // Detect active logins and restore sessions on page load 
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
+            const flashBanner = sessionStorage.getItem('showWelcomeBanner');
+            if (flashBanner === 'true') {
+                setBannerMessage(`✨ Welcome back, ${parsedUser.fullName}! Login successful.`);
+                sessionStorage.removeItem('showWelcomeBanner');
+                setTimeout(() => {
+                    setBannerMessage('');
+                }, 5000);
+            }
         }
-      } catch (err) {
-        console.error("Error connecting with MERN database profile feeds:", err);
-      }
+    }, []);
+
+    const closeModals = () => {
+        setIsLoginOpen(false);
+        setIsRegisterOpen(false);
     };
-    fetchCloudProfiles();
-  }, [isRegisterOpen]); // Refreshes profiles instantly if a user registers successfully
 
-  return (
-    <div className="app-viewport-container">
-      
-      {/* 1. GLOBAL SITE HEADER NAVBAR */}
-      <header className="global-site-navbar">
-        <div className="nav-brand-container">
-          <div className="brand-logo-circle">
-            <span className="logo-text">
-              <span className="maroon-letter">N</span><span className="gold-letter">V</span>
-            </span>
-          </div>
-          <div className="brand-text-stack">
-            <h1 className="brand-main-title">
-              <span className="text-maroon">Nichaya</span><span className="text-gold">Vedika</span>
-            </h1>
-            <span className="brand-caption-text">✧ Sita Rama blessing ✧</span>
-          </div>
-        </div>
+    // Hydrates the templates over the network pipeline while locking length to 4
+    useEffect(() => {
+        const fetchCloudProfiles = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/profiles');
+                const data = await response.json();
 
-        <input type="checkbox" id="mobile-menu-toggle-checkbox" className="nav-toggle-checkbox" />
-        <label htmlFor="mobile-menu-toggle-checkbox" className="mobile-hamburger-btn">
-          <span></span><span></span><span></span>
-        </label>
+                if (response.ok && data.length > 0) {
+                    const latestFourData = data.slice(0, 4);
+                    setProfiles(prev => {
+                        return prev.map((placeholder, index) => {
+                            if (latestFourData[index]) {
+                                return { ...latestFourData[index], isPlaceholder: false };
+                            }
+                            return placeholder;
+                        });
+                    });
+                }
+            } catch (err) {
+                console.error("Error connecting with MERN database profile feeds:", err);
+            }
+        };
+        fetchCloudProfiles();
+    }, []);
 
-        <nav className="nav-links-menu">
-          <a href="#" className="menu-item active">Home</a>
-          <a href="#" className="menu-item">Membership</a>
-          <a href="#" className="menu-item">Events</a>
-          <a href="#" className="menu-item">Contact us</a>
-          <a href="#" className="menu-item">About us</a>
-        </nav>
+    // Checks if the browser URL path currently holds a security token link
+    const isResetView = window.location.pathname.includes('/reset-password');
+    return (
+        <div className="app-viewport-container" style={{ position: 'relative' }}>
 
-        <div className="nav-actions-auth">
-          <button className="btn-action-login" onClick={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}>LOGIN</button>
-                  <button className="btn-action-login" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>REGISTER</button>
-        </div>
-      </header>
-
-      {/* 2. MAIN HERO REALIGNMENT BODY CONTAINER */}
-      <section className="horizontal-hero-matrix structural-realignment">
-        
-        {/* LEFT COLUMN: FIXED IMAGE CARD (Arch fully removed, clean bento-radius instead) */}
-        <div className="left-branded-image-stack">
-          <div className="hero-banner-right-media-column">
-            <div className="hero-banner-main-artwork-wrapper">
-              <img src="nvlogo.jpg" alt="Sita Rama Blessings" />
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: CONTROLS & 4 LATEST USER PROFILE CARDS */}
-        <div className="right-content-management-stack">
-<div className="nav-actions-auth">
-  {/* Added active onClick handlers to toggle your registration modals instantly */}
-  <button className="btn-action-login" onClick={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}>Create Profile</button>
-                      <button className="btn-action-login" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>Browse Profile(s)</button>
-</div>
-
-          <div className="profile-cards-grid-row-four">
-            {profiles.length > 0 ? (
-              // Loops your custom HTML over real MongoDB Atlas data profiles dynamically
-              profiles.map((user) => (
-                <div className="member-profile-card-four" key={user._id}>
-                  <span className={`member-tag-label ${user.gender === 'Female' ? 'new-female' : 'new-male'}`}>
-                    New {user.gender || 'Female'}
-                  </span>
-                  <div className="member-avatar-circle">
-                    <span className="avatar-placeholder">{user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}</span>
-                  </div>
-                  <h4 className="member-display-name">{user.fullName}</h4>
-                  <p className="member-meta-details">{user.age || 25} Yrs • {user.location || 'Any'}</p>
-                  <button className="btn-view-profile-card">View Profile</button>
+            {/* 1. DYNAMIC TOP FLOATING BANNER */}
+            {bannerMessage && (
+                <div style={{ position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', backgroundColor: '#800000', color: '#ffffff', border: '2px solid #d4af37', padding: '12px 30px', borderRadius: '30px', fontWeight: 'bold', fontSize: '15px', zIndex: 10000, boxShadow: '0 4px 15px rgba(0,0,0,0.3)', textAlign: 'center' }}>
+                    {bannerMessage}
                 </div>
-              ))
-            ) : (
-              // Your native HTML cards serve as a smart fallback if the database has 0 user documents
-              <>
-                <div className="member-profile-card-four">
-                  <span className="member-tag-label new-female">New Female</span>
-                  <div className="member-avatar-circle"><span className="avatar-placeholder">F</span></div>
-                  <h4 className="member-display-name">Meera Hegde</h4>
-                  <p className="member-meta-details">25 Yrs • Bangalore</p>
-                                      <button className="btn-view-profile-card">View Profile</button>
-                </div>
-                <div className="member-profile-card-four">
-                  <span className="member-tag-label new-male">New Male</span>
-                  <div className="member-avatar-circle"><span className="avatar-placeholder">M</span></div>
-                  <h4 className="member-display-name">Aditya Verma</h4>
-                  <p className="member-meta-details">28 Yrs • Mumbai</p>
-                  <button className="btn-view-profile-card">View Profile</button>
-                </div>
-                <div className="member-profile-card-four">
-                  <span className="member-tag-label new-female">New Female</span>
-                  <div className="member-avatar-circle"><span className="avatar-placeholder">F</span></div>
-                  <h4 className="member-display-name">Ananya Iyer</h4>
-                  <p className="member-meta-details">26 Yrs • Chennai</p>
-                  <button className="btn-view-profile-card">View Profile</button>
-                </div>
-                <div className="member-profile-card-four">
-                  <span className="member-tag-label new-male">New Male</span>
-                  <div className="member-avatar-circle"><span className="avatar-placeholder">M</span></div>
-                  <h4 className="member-display-name">Rohan Sharma</h4>
-                  <p className="member-meta-details">29 Yrs • Delhi</p>
-                  <button className="btn-view-profile-card">View Profile</button>
-                </div>
-              </>
             )}
-          </div>
-          {/* PLATFORM TRUST NUMBERS METRIC ROW */}
-          <div className="platform-info-highlights-strip">
-            <div className="info-highlight-item">
-              <span className="info-metric-number">10,000+</span>
-              <span className="info-metric-label">🛡️ Verified Profiles</span>
-            </div>
-            <div className="info-highlight-divider"></div>
-            <div className="info-highlight-item">
-              <span className="info-metric-number">5,000+</span>
-              <span className="info-metric-label">❤️ Happy Marriages</span>
-            </div>
-            <div className="info-highlight-divider"></div>
-            <div className="info-highlight-item">
-              <span className="info-metric-number">100%</span>
-              <span className="info-metric-label">🔒 Privacy Protected</span>
-            </div>
-          </div>
+
+            {/* 2. GLOBAL NAVBAR HEADER (Always visible on all pages) */}
+            <Navbar
+                user={user}
+                setUser={setUser}
+                onOpenLogin={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}
+                onOpenRegister={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}
+            />
+
+            {isResetView ? (
+                /* ========================================================================= */
+                /* VIEW A: RENDER ONLY PASSWORD OVERWRITE CARD IF IN RESET LINK MODE         */
+                /* ========================================================================= */
+                <ResetPasswordPage />
+            ) : (
+                /* ========================================================================= */
+                /* VIEW B: STANDARD HOMEPAGE CORE LANDING SYSTEM CONTENTS                   */
+                /* ========================================================================= */
+                <>
+                    {/* 3. HERO AND CARDS CONTENT GRID */}
+                    <section className="horizontal-hero-matrix structural-realignment">
+                        <div className="left-branded-image-stack">
+                            <div className="hero-banner-right-media-column">
+                                <div className="hero-banner-main-artwork-wrapper">
+                                    <img src="nvlogo.jpg" alt="Sita Rama Blessings" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="right-content-management-stack">
+                            <div className="nav-actions-auth">
+                                {user ? (
+                                    <span style={{ color: '#800000', fontWeight: '600', fontStyle: 'italic' }}> ✓ You are logged in as an active member. </span>
+                                ) : (
+                                    <>
+                                        <button className="btn-action-login" onClick={() => { setIsLoginOpen(true); setIsRegisterOpen(false); }}>Create Profile</button>
+                                        <button className="btn-action-login" onClick={() => { setIsRegisterOpen(true); setIsLoginOpen(false); }}>Browse Profile(s)</button>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="profile-cards-grid-row-four">
+                                {profiles.map((item) => (
+                                    <div
+                                        className={`member-profile-card-four ${item.isPlaceholder ? 'skeleton-loading-pulse' : ''}`}
+                                        key={item._id}
+                                        style={{ opacity: item.isPlaceholder ? 0.75 : 1, transition: 'opacity 0.4s ease, transform 0.3s' }}
+                                    >
+                                        <span className={`member-tag-label ${item.gender === 'Female' ? 'new-female' : 'new-male'}`}>
+                                            {item.isPlaceholder ? 'Preview' : `New ${item.gender}`}
+                                        </span>
+                                        <div className="member-avatar-circle">
+                                            <span className="avatar-placeholder">
+                                                {item.fullName ? item.fullName.charAt(0).toUpperCase() : 'U'}
+                                            </span>
+                                        </div>
+                                        <h4 className="member-display-name">{item.fullName}</h4>
+                                        <p className="member-meta-details">{item.age} Yrs • {item.location}</p>
+                                        <button className="btn-view-profile-card" disabled={item.isPlaceholder}>
+                                            {item.isPlaceholder ? 'Loading...' : 'View Profile'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="platform-info-highlights-strip">
+                                <div className="info-highlight-item">
+                                    <span className="info-metric-number">10,000+</span>
+                                    <span className="info-metric-label">🛡️ Verified Profiles</span>
+                                </div>
+                                <div className="info-highlight-divider"></div>
+                                <div className="info-highlight-item">
+                                    <span className="info-metric-number">5,000+</span>
+                                    <span className="info-metric-label">❤️ Happy Marriages</span>
+                                </div>
+                                <div className="info-highlight-divider"></div>
+                                <div className="info-highlight-item">
+                                    <span className="info-metric-number">100%</span>
+                                    <span className="info-metric-label">🔒 Privacy Protected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 4. SEARCH FILTER ROW SYSTEM */}
+                    <section className="global-full-width-search-bar-system">
+                        <div className="search-panel-container">
+                            <div className="search-panel-header-row">
+                                <h3 className="search-panel-title">⚜️ Find Your Ideal Connection</h3>
+                            </div>
+                            <form className="search-filter-horizontal-form" onSubmit={(e) => e.preventDefault()}>
+                                <div className="form-field-group-block">
+                                    <label htmlFor="search-religion">Religion</label>
+                                    <div className="custom-select-wrapper">
+                                        <select id="search-religion">
+                                            <option value="any">Any</option>
+                                            <option value="hindu">Hindu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-field-group-block">
+                                    <label htmlFor="search-community">Community</label>
+                                    <div className="custom-select-wrapper">
+                                        <select id="search-community">
+                                            <option value="any">Any</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-field-group-block">
+                                    <label htmlFor="search-age">Age Scale</label>
+                                    <div className="custom-select-wrapper">
+                                        <select id="search-age">
+                                            <option value="18-60">18 - 60 Years</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-field-group-block">
+                                    <label htmlFor="search-country">Country</label>
+                                    <div className="custom-select-wrapper">
+                                        <select id="search-country">
+                                            <option value="us">United States</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-field-group-block">
+                                    <label htmlFor="search-state">State</label>
+                                    <div className="custom-select-wrapper">
+                                        <select id="search-state">
+                                            <option value="any">Telangana</option>
+                                            <option value="any">Andhra Pradesh</option>
+                                            <option value="any">Karnataka</option>
+                                            <option value="any">Tamil Nadu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-submit-action-block">
+                                    <button type="submit" className="btn-action-login"> <span>Search Profiles</span> </button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    {/* 5. FOOTER LEGAL LINKS */}
+                    <footer className="global-site-footer">
+                        <div className="footer-divider-line"></div>
+                        <div className="footer-content-wrapper">
+                            <div className="footer-left-legal">
+                                <p>&copy; 2026 NichayaVedika. All Rights Reserved.</p>
+                            </div>
+                            <div className="footer-right-links">
+                                <a href="#" className="footer-link">Privacy Policy</a>
+                                <span className="link-separator">•</span>
+                                <a href="#" className="footer-link">Terms of Use</a>
+                                <span className="link-separator">•</span>
+                                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="footer-link facebook-brand-link">
+                                    <span>Facebook</span>
+                                </a>
+                            </div>
+                        </div>
+                    </footer>
+                </>
+            )}
+
+            {/* 6. GLOBAL CONTROLLERS AND SYSTEM OVERLAYS */}
+            <AuthModals
+                isLoginOpen={isLoginOpen}
+                isRegisterOpen={isRegisterOpen}
+                onCloseAll={closeModals}
+                onLoginSuccess={setUser}
+            />
+
+            <InactivityTracker />
         </div>
-      </section>
-
-      {/* STEP 3: HORIZONTAL FILTER ROW SEARCH MATRIX */}
-      <section className="global-full-width-search-bar-system">
-        <div className="search-panel-container">
-          <div className="search-panel-header-row">
-            <h3 className="search-panel-title">⚜ Find Your Ideal Connection</h3>
-          </div>
-          <form className="search-filter-horizontal-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-field-group-block">
-              <label htmlFor="search-religion">Religion</label>
-              <div className="custom-select-wrapper">
-                <select id="search-religion">
-                  <option value="any">Any</option>
-                  <option value="hindu">Hindu</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-field-group-block">
-              <label htmlFor="search-community">Community</label>
-              <div className="custom-select-wrapper">
-                <select id="search-community">
-                  <option value="any">Any</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-field-group-block">
-              <label htmlFor="search-age">Age Scale</label>
-              <div className="custom-select-wrapper">
-                <select id="search-age">
-                  <option value="18-60">18 - 60 Years</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-field-group-block">
-              <label htmlFor="search-country">Country</label>
-              <div className="custom-select-wrapper">
-                <select id="search-country">
-                  <option value="us">United States</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-field-group-block">
-              <label htmlFor="search-state">State</label>
-              <div className="custom-select-wrapper">
-                <select id="search-state">
-                                  <option value="any">Telangana</option>
-                                  <option value="any">Andra Pradesh</option>
-                                  <option value="any">Karnataka</option>
-                                  <option value="any">Tamilanadu</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-submit-action-block">
-                          <button type="submit" className="btn-action-login">
-                <span>Search</span> <span> Profiles</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      {/* 4. BRAND FOOTER SYSTEM */}
-      <footer className="global-site-footer">
-        <div className="footer-divider-line"></div>
-        <div className="footer-content-wrapper">
-          <div className="footer-left-legal">
-            <p>&copy; 2026 NichayaVedika. All Rights Reserved.</p>
-          </div>
-          <div className="footer-right-links">
-            <a href="#" className="footer-link">Privacy Policy</a>
-            <span className="link-separator">•</span>
-            <a href="#" className="footer-link">Terms of Use</a>
-            <span className="link-separator">•</span>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="footer-link facebook-brand-link">
-              <svg className="facebook-icon-svg" viewBox="0 0 24 24">
-                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.8z" />
-              </svg>
-              <span>Facebook</span>
-            </a>
-          </div>
-        </div>
-      </footer>
-
-      {/* ACTIVE AUTHORIZATION WINDOW POPUP OVERLAYS CONTROLLER */}
-         
-
-          {/* ACTIVE AUTHORIZATION WINDOW POPUP OVERLAYS CONTROLLER */}
-          <AuthModals
-              isLoginOpen={isLoginOpen}
-              isRegisterOpen={isRegisterOpen}
-              onCloseAll={closeModals}
-          />
-
-          {/* POPUP OVERLAY MOUNT FOR REGISTRATION COMPONENT */}
-          {isRegisterOpen && (
-              <div className="modal-overlay">
-                  <div className="modal-box">
-                      <button className="close-btn" onClick={closeModals}>&times;</button>
-                      <Register onSuccess={closeModals} />
-                  </div>
-              </div>
-          )}
-
-
-    </div>
-  );
+    );
 }

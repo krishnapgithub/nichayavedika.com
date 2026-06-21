@@ -2,18 +2,21 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
-const path = require('path'); // Added for production static file serving
+const path = require('path');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto'); // Ensure crypto is imported safely
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware configurations
+// Middleware configurations 
 app.use(express.json());
-app.use(cors());
+app.use(cors()); // 🌟 This line tells the browser to allow port 5173 to talk to port 5000!
 
-// -------------------------------------------------------------------------
-// COMBINED SCHEMA: Defined inline directly to prevent any Vercel file import errors
-// -------------------------------------------------------------------------
+// ------------------------------------------------------------------------- 
+// COMBINED SCHEMA: Defined inline directly to prevent any Vercel file import errors 
+// ------------------------------------------------------------------------- 
 const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -23,18 +26,23 @@ const userSchema = new mongoose.Schema({
     religion: { type: String, required: true },
     location: { type: String, required: true },
     profession: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+
+    // PASSWORD COMPLIANCE & RECOVERY METRIC FIELDS
+    passwordChangedAt: { type: Date, default: Date.now },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
-// Handles serverless environment hot-reloads safely
+// Handles serverless environment hot-reloads safely 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-// Establish connection with MongoDB Atlas Cloud
+// Establish connection with MongoDB Atlas Cloud 
 mongoose.connect('mongodb+srv://kadmin:kadim369@cluster0.vr8czrc.mongodb.net/nichayavedika?retryWrites=true&w=majority')
     .then(() => console.log('Successfully connected to MongoDB Atlas Cloud!'))
     .catch(err => console.error('MongoDB Cloud connection error:', err));
 
-// 1. GET ROUTE: Fetches latest profiles from MongoDB Atlas to display on cards
+// 1. GET ROUTE: Fetches latest profiles from MongoDB Atlas to display on cards 
 app.get('/api/auth/profiles', async (req, res) => {
     try {
         const users = await User.find({}, 'fullName gender age location profession')
@@ -47,23 +55,19 @@ app.get('/api/auth/profiles', async (req, res) => {
     }
 });
 
-// 2. POST ROUTE: Handles your AuthModals registration submissions safely
+// 2. POST ROUTE: Handles your AuthModals registration submissions safely 
 app.post('/api/register', async (req, res) => {
     try {
         const { fullName, email, password, gender, age, religion, location, profession } = req.body;
-
         if (!fullName || !email || !password || !gender || !age || !religion || !location || !profession) {
             return res.status(400).json({ message: "Please fill in all layout fields." });
         }
-
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ message: "This email address is already registered." });
         }
-
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
         const newUser = new User({
             fullName,
             email: email.toLowerCase(),
@@ -72,9 +76,9 @@ app.post('/api/register', async (req, res) => {
             age: Number(age),
             religion,
             location,
-            profession
+            profession,
+            passwordChangedAt: Date.now() // Timestamps password creation
         });
-
         await newUser.save();
         return res.status(201).json({ message: "Registration successful! Profile saved to cloud." });
     } catch (error) {
@@ -83,29 +87,42 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 3. NEW LOGIN ROUTE: Validates incoming AuthModals login check-ins securely
+// 3. UPDATED LOGIN ROUTE: Validates incoming credentials and signs a secure JWT token
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         if (!email || !password) {
             return res.status(400).json({ message: "Please enter both email and password fields." });
         }
 
-        // Lookup user in MongoDB Atlas
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(400).json({ message: "Invalid email credentials or password match." });
         }
 
-        // Compare encrypted passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid email credentials or password match." });
         }
 
+        // ⏳ 90-DAY EXPRIATION INTERVAL INTERVAL METRIC CHECK
+        const passwordAgeInDays = (Date.now() - new Date(user.passwordChangedAt).getTime()) / (1000 * 60 * 60 * 24);
+        if (passwordAgeInDays >= 90) {
+            return res.status(403).json({
+                message: "Your password has expired (90 days limit). Please use the password reset link to update it.",
+                requiresPasswordReset: true
+            });
+        }
+
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            process.env.JWT_SECRET || 'fallback_secret_key_369',
+            { expiresIn: '7d' }
+        );
+
         return res.status(200).json({
             message: "Login successful!",
+            token: token,
             user: { id: user._id, fullName: user.fullName, email: user.email }
         });
     } catch (error) {
@@ -114,16 +131,116 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// 4. PRODUCTION ROUTER HANDLER: Delivers compiled React build pages automatically
-if (process.env.NODE_ENV === 'production') {
-    // Point express to serve your compiled client folder assets
-    app.use(express.static(path.join(__dirname, 'client/dist'))); // Change to 'client/build' if using Create-React-App
+// 4. PASSWORD RESET STEP 1: Process forgotten credential matching requests
+app.post('/api/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
 
+        if (!user) {
+            return res.status(404).json({ message: "No profile registered with that email address." });
+        }
+
+        // Generate secure random recovery hex string parameter
+        const token = crypto.randomBytes(20).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 Hour lifespan
+        await user.save();
+
+        // 🌟 SETUP FREE GMAIL ROUTER BACKUP IN TRANSIT RULES
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
+            }
+        });
+
+        const resetUrl = `http://localhost:5173/reset-password/${token}`;
+
+        const mailOptions = {
+            from: `"NichayaVedika Matrimony" <info@nichayavedika.com>`,
+            to: user.email,
+            subject: 'NichayaVedika Account Password Recovery Link',
+            html: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 1px solid #d4af37; padding: 20px; border-radius: 8px; background-color: #ffffff;">
+          <h2 style="color: #800000; text-align: center;">Account Password Reset</h2>
+          <p>Hello ${user.fullName},</p>
+          <p>We received a request to reset your password for your profile on NichayaVedika Matrimony.</p>
+          <p>Please click the button below to update your security credentials. This link will expire in 1 hour.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" style="background-color: #800000; color: #ffffff; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block;">Reset My Password</a>
+          </div>
+          <p style="color: #666666; font-size: 13px;">If you did not request this change, please ignore this email safely.</p>
+        </div>
+      `
+        };
+
+        // TEMPORARY DEVELOPMENT FALLBACK (Pipes link to terminal if Gmail is offline)
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (mailError) {
+            console.log("=========================================================");
+            console.log(`[DEV MODE LINK BYPASS]: Reset link -> ${resetUrl}`);
+            console.log("=========================================================");
+
+            // Force a successful response anyway so your frontend form updates!
+            return res.status(200).json({
+                message: "Password reset instructions sent successfully! (Dev Mode: Checked Terminal Link)"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Password reset instructions sent successfully! Please check your email inbox."
+        });
+
+        return res.status(200).json({
+            message: "Password reset instructions sent successfully! Please check your email inbox."
+        });
+
+    } catch (error) {
+        console.error("Forgot password process error:", error);
+        return res.status(500).json({ message: "An internal server mailing error occurred." });
+    }
+});
+
+// 5. PASSWORD RESET STEP 2: Validate token and overwrite password schema document
+app.post('/api/reset-password/:token', async (req, res) => {
+    try {
+        const { password } = req.body;
+
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Password reset token is invalid or has expired." });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+
+        user.passwordChangedAt = Date.now(); // Resets 90-day timer window counter
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        return res.status(200).json({ message: "Password updated successfully! You can now log in." });
+
+    } catch (error) {
+        console.error("Reset password process error:", error);
+        return res.status(500).json({ message: "An internal server error occurred." });
+    }
+});
+
+// 6. PRODUCTION ROUTER HANDLER 
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'client/dist')));
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
     });
 }
 
-// Start the port listening block
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend server running cleanly on port ${PORT}`));
